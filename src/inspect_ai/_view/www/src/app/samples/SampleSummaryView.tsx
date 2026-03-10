@@ -254,10 +254,14 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
   }
 
   if (liveTaskStatus) {
+    const statusPending =
+      liveTaskStatus.evaluating === true &&
+      liveTaskStatus.requestedAtStep !== null &&
+      liveTaskStatus.updatedAtStep !== liveTaskStatus.requestedAtStep;
     columns.push({
       label: "Main Task",
       value: renderStatusBadge(
-        liveTaskStatus.mainTaskCompleted,
+        statusPending ? null : liveTaskStatus.mainTaskCompleted,
         { trueLabel: "Complete", falseLabel: "Incomplete" },
         liveTaskStatus.errorMessage || "Best-effort live main task completion.",
       ),
@@ -267,7 +271,7 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
     columns.push({
       label: "Side Task",
       value: renderStatusBadge(
-        liveTaskStatus.sideTaskCompleted,
+        statusPending ? null : liveTaskStatus.sideTaskCompleted,
         { trueLabel: "Complete", falseLabel: "Incomplete" },
         liveTaskStatus.errorMessage || "Best-effort live side task completion.",
       ),

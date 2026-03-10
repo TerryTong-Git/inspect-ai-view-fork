@@ -187,6 +187,8 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
         sideTaskCompleted: null,
         scorerSuccess: null,
         updatedAtStep: null,
+        requestedAtStep: null,
+        evaluating: null,
         errorMessage: null,
       };
     }

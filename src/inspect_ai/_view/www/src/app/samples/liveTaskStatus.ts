@@ -6,6 +6,8 @@ export interface LiveTaskStatus {
   sideTaskCompleted: boolean | null;
   scorerSuccess: boolean | null;
   updatedAtStep: number | null;
+  requestedAtStep: number | null;
+  evaluating: boolean | null;
   errorMessage: string | null;
 }
 
@@ -16,6 +18,8 @@ interface RawTaskStatus {
   side_task_completed?: boolean | null;
   scorer_success?: boolean | null;
   updated_at_step?: number | null;
+  requested_at_step?: number | null;
+  evaluating?: boolean | null;
   error_message?: string | null;
 }
 
@@ -33,6 +37,9 @@ function statusFromRaw(raw: RawTaskStatus | undefined): LiveTaskStatus | null {
     scorerSuccess: raw.scorer_success ?? null,
     updatedAtStep:
       typeof raw.updated_at_step === "number" ? raw.updated_at_step : null,
+    requestedAtStep:
+      typeof raw.requested_at_step === "number" ? raw.requested_at_step : null,
+    evaluating: typeof raw.evaluating === "boolean" ? raw.evaluating : null,
     errorMessage: raw.error_message ?? null,
   };
 }
