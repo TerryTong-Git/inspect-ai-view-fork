@@ -55,6 +55,10 @@ import {
   messagesFromEvents,
 } from "./chat/messages";
 import { MessagesNavPills, MessagesWithSidebar } from "./chat/MessagesNavPills";
+import {
+  liveTaskStatusFromEvents,
+  liveTaskStatusFromStore,
+} from "./liveTaskStatus";
 import styles from "./SampleDisplay.module.css";
 import { SampleSummaryView } from "./SampleSummaryView";
 import { SampleScoresView } from "./scores/SampleScoresView";
@@ -157,6 +161,23 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
     }
     return max;
   }, [sampleMessages]);
+
+  const liveTaskStatus = useMemo(() => {
+    if (runningSampleData && runningSampleData.length > 0) {
+      return liveTaskStatusFromEvents(runningSampleData);
+    }
+    return liveTaskStatusFromStore(sample?.store);
+  }, [runningSampleData, sample?.store]);
+
+  const sampleCompleted = useMemo(() => {
+    if (selectedSampleSummary?.completed !== undefined) {
+      return selectedSampleSummary.completed;
+    }
+    if (sample?.completed_at) {
+      return true;
+    }
+    return runningSampleData && runningSampleData.length > 0 ? false : null;
+  }, [selectedSampleSummary?.completed, sample?.completed_at, runningSampleData]);
 
   // Get all URL parameters at component level
   const {
@@ -370,6 +391,8 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
           parent_id={id}
           sample={displaySample}
           maxSuspicionScore={maxSuspicionScore}
+          sampleCompleted={sampleCompleted}
+          liveTaskStatus={liveTaskStatus}
         />
       ) : undefined}
       <TabSet

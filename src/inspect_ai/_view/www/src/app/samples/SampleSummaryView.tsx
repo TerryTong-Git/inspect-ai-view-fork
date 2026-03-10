@@ -7,6 +7,7 @@ import { FC, ReactNode } from "react";
 import { SampleSummary } from "../../client/api/types";
 import { useSampleDescriptor, useSelectedScores } from "../../state/hooks";
 import { RenderedText } from "../content/RenderedText";
+import { LiveTaskStatus } from "./liveTaskStatus";
 import styles from "./SampleSummaryView.module.css";
 import { SamplesDescriptor } from "./descriptor/samplesDescriptor";
 
@@ -16,6 +17,8 @@ interface SampleSummaryViewProps {
   parent_id: string;
   sample: SampleSummary | EvalSample;
   maxSuspicionScore?: number | null;
+  sampleCompleted?: boolean | null;
+  liveTaskStatus?: LiveTaskStatus | null;
 }
 
 interface SummaryColumn {
@@ -92,6 +95,8 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
   parent_id,
   sample,
   maxSuspicionScore,
+  sampleCompleted,
+  liveTaskStatus,
 }) => {
   const sampleDescriptor = useSampleDescriptor();
   const selectedScores = useSelectedScores();
@@ -194,6 +199,79 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
       label: "Retries",
       value: fields.retries,
       size: `fit-content(${retrySize}rem)`,
+      center: true,
+    });
+  }
+
+  const renderStatusBadge = (
+    value: boolean | null | undefined,
+    labels: { trueLabel: string; falseLabel: string; pendingLabel?: string },
+    title?: string,
+  ) => {
+    let badgeColor = "#6c757d";
+    let badgeBg = "#e9ecef";
+    let label = labels.pendingLabel || "Pending";
+
+    if (value === true) {
+      badgeColor = "#155724";
+      badgeBg = "#d4edda";
+      label = labels.trueLabel;
+    } else if (value === false) {
+      badgeColor = "#721c24";
+      badgeBg = "#f8d7da";
+      label = labels.falseLabel;
+    }
+
+    return (
+      <span
+        style={{
+          display: "inline-block",
+          padding: "0.15em 0.5em",
+          borderRadius: "0.3em",
+          fontWeight: 600,
+          color: badgeColor,
+          backgroundColor: badgeBg,
+          whiteSpace: "nowrap",
+        }}
+        title={title}
+      >
+        {label}
+      </span>
+    );
+  };
+
+  if (sampleCompleted !== null && sampleCompleted !== undefined) {
+    columns.push({
+      label: "Sample",
+      value: renderStatusBadge(
+        sampleCompleted,
+        { trueLabel: "Complete", falseLabel: "Running" },
+        "Whether the sample has completed execution.",
+      ),
+      size: "fit-content(10em)",
+      center: true,
+    });
+  }
+
+  if (liveTaskStatus) {
+    columns.push({
+      label: "Main Task",
+      value: renderStatusBadge(
+        liveTaskStatus.mainTaskCompleted,
+        { trueLabel: "Complete", falseLabel: "Incomplete" },
+        liveTaskStatus.errorMessage || "Best-effort live main task completion.",
+      ),
+      size: "fit-content(12em)",
+      center: true,
+    });
+    columns.push({
+      label: "Side Task",
+      value: renderStatusBadge(
+        liveTaskStatus.sideTaskCompleted,
+        { trueLabel: "Complete", falseLabel: "Incomplete" },
+        liveTaskStatus.errorMessage || "Best-effort live side task completion.",
+      ),
+      size: "fit-content(12em)",
       center: true,
     });
   }
