@@ -1,0 +1,42 @@
+/* ─── FinalIclCard ─── */
+
+.card {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.injectedBadge {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  border-radius: 0.2em;
+  font-size: 0.65em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #166534;
+  background: #dcfce7;
+}
+
+.iclContent {
+  white-space: pre-wrap;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.8em;
+  line-height: 1.6;
+  padding: 0.8em;
+  background: var(--bs-tertiary-bg);
+  border-radius: 0.3em;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.charCount {
+  font-size: 0.75em;
+  color: var(--bs-tertiary-color);
+  margin-left: auto;
+}

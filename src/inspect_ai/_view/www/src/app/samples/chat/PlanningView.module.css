@@ -1,0 +1,186 @@
+.container {
+  padding: 0.5em 0;
+}
+
+/* ─── Pipeline Summary ─── */
+
+.summary {
+  padding: 0.6em 0.8em;
+  margin-bottom: 0.75em;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.4em;
+  background: var(--bs-tertiary-bg);
+}
+
+.summaryTitle {
+  font-weight: 600;
+  font-size: 1em;
+  margin-bottom: 0.3em;
+}
+
+.summaryStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8em;
+  font-size: 0.8em;
+  color: var(--bs-secondary-color);
+}
+
+.statItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.statStrategy {
+  color: #6b21a8;
+}
+.statPlanner {
+  color: #1e40af;
+}
+.statVerifier {
+  color: #9a3412;
+}
+
+/* ─── Role Badges ─── */
+
+.roleBadge {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  border-radius: 0.25em;
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.roleStrategy {
+  color: #6b21a8;
+  background-color: #f3e8ff;
+}
+
+/* ─── Strategy Card ─── */
+
+.strategyCard {
+  border: 1px solid var(--bs-border-color);
+  border-left: 3px solid #6b21a8;
+  border-radius: 0.4em;
+  margin-bottom: 0.75em;
+  overflow: hidden;
+}
+
+.strategyHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 0.8em;
+  background: linear-gradient(135deg, #faf5ff 0%, var(--bs-tertiary-bg) 100%);
+  cursor: pointer;
+  user-select: none;
+}
+
+.strategyHeader:hover {
+  background: linear-gradient(135deg, #f3e8ff 0%, var(--bs-secondary-bg) 100%);
+}
+
+.strategyLabel {
+  font-weight: 500;
+  font-size: 0.85em;
+}
+
+.strategyBody {
+  padding: 0;
+}
+
+.strategyInstruction {
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.strategyInstructionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  background: var(--bs-tertiary-bg);
+  user-select: none;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+.strategyInstructionHeader:hover {
+  background: var(--bs-secondary-bg);
+}
+
+.strategyInstructionBody {
+  padding: 0.5em 0.8em;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.strategyReasoning {
+  border-bottom: 1px solid var(--bs-border-color);
+  padding: 0.4em 0.8em;
+}
+
+.strategyResponse {
+  padding: 0.5em 0.8em;
+}
+
+/* ─── Reasoning blocks ─── */
+
+.reasoningLabel {
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b21a8;
+  margin-bottom: 0.3em;
+}
+
+.reasoningBlock {
+  white-space: pre-wrap;
+  font-size: 0.8em;
+  line-height: 1.5;
+  padding: 0.8em;
+  background: var(--bs-tertiary-bg);
+  border-radius: 0.3em;
+  margin-bottom: 0.4em;
+  border-left: 3px solid #6b21a8;
+  overflow-x: auto;
+}
+
+/* ─── ICL Demo Generation Header ─── */
+
+.iclHeader {
+  font-weight: 600;
+  font-size: 0.95em;
+  padding: 0.4em 0;
+  margin-top: 0.5em;
+  margin-bottom: 0.4em;
+  border-bottom: 2px solid var(--bs-border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.turnCount {
+  font-weight: 400;
+  font-size: 0.8em;
+  color: var(--bs-secondary-color);
+}
+
+/* ─── Chevron (strategy card internal) ─── */
+
+.chevron {
+  font-size: 0.65em;
+  transition: transform 0.15s ease;
+  color: var(--bs-secondary-color);
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}

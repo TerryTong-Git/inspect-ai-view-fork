@@ -1,0 +1,67 @@
+import clsx from "clsx";
+import { FC } from "react";
+import { Messages } from "../../../@types/log";
+import { ChatMessageRow } from "./ChatMessageRow";
+import { resolveMessages, sortMessagesBySuspicion } from "./messages";
+import { ChatViewToolCallStyle } from "./types";
+
+interface ChatViewProps {
+  id?: string;
+  messages: Messages;
+  toolCallStyle?: ChatViewToolCallStyle;
+  resolveToolCallsIntoPreviousMessage?: boolean;
+  title?: string;
+  indented?: boolean;
+  numbered?: boolean;
+  className?: string | string[];
+  allowLinking?: boolean;
+  sortBySuspicion?: boolean;
+}
+
+/**
+ * Renders the ChatView component.
+ */
+export const ChatView: FC<ChatViewProps> = ({
+  id,
+  messages,
+  toolCallStyle = "complete",
+  resolveToolCallsIntoPreviousMessage = true,
+  indented,
+  numbered = true,
+  className,
+  allowLinking = true,
+  sortBySuspicion = false,
+}) => {
+  const resolved = resolveToolCallsIntoPreviousMessage
+    ? resolveMessages(messages)
+    : messages.map((msg) => {
+        return {
+          message: msg,
+          toolMessages: [],
+        };
+      });
+  const collapsedMessages = sortBySuspicion
+    ? sortMessagesBySuspicion(resolved)
+    : resolved;
+  const result = (
+    <div className={clsx(className)}>
+      {collapsedMessages.map((msg, index) => {
+        const number =
+          collapsedMessages.length > 1 && numbered ? index + 1 : undefined;
+        return (
+          <ChatMessageRow
+            key={`${id}-msg-${index}`}
+            parentName={id || "chat-view"}
+            number={number}
+            resolvedMessage={msg}
+            indented={indented}
+            toolCallStyle={toolCallStyle}
+            allowLinking={allowLinking}
+            highlightUserMessage={true}
+          />
+        );
+      })}
+    </div>
+  );
+  return result;
+};

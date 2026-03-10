@@ -1,0 +1,241 @@
+/* ─── Timeline Container ─── */
+
+.timeline {
+  position: relative;
+  padding-left: 1.5em;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.5em;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #3b82f6 0%, #f97316 50%, #3b82f6 100%);
+  border-radius: 1px;
+}
+
+.emptyTimeline {
+  padding: 1em;
+  color: var(--bs-secondary-color);
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+/* ─── Turn Entry (dot on timeline) ─── */
+
+.turnEntry {
+  position: relative;
+  margin-bottom: 0.5em;
+}
+
+.turnEntry::before {
+  content: "";
+  position: absolute;
+  left: -1em;
+  top: 0.7em;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  border: 2px solid;
+  z-index: 1;
+}
+
+.plannerDot::before {
+  border-color: #3b82f6;
+  background: var(--bs-body-bg);
+}
+
+.verifierDot::before {
+  border-color: #f97316;
+  background: var(--bs-body-bg);
+}
+
+/* ─── Verifier Indentation ─── */
+
+.verifierIndent {
+  margin-left: 1.5em;
+}
+
+/* ─── Turn Header ─── */
+
+.turnHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 0.8em;
+  cursor: pointer;
+  background: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.4em;
+  user-select: none;
+}
+
+.turnHeader:hover {
+  background: var(--bs-secondary-bg);
+}
+
+.turnLabel {
+  font-weight: 500;
+  font-size: 0.85em;
+  white-space: nowrap;
+}
+
+.oneLiner {
+  font-size: 0.8em;
+  color: var(--bs-secondary-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* ─── Turn Body ─── */
+
+.turnBody {
+  padding: 0;
+  border: 1px solid var(--bs-border-color);
+  border-top: none;
+  border-radius: 0 0 0.4em 0.4em;
+}
+
+/* ─── Instruction Section (collapsed by default) ─── */
+
+.instructionSection {
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.instructionSection:last-child {
+  border-bottom: none;
+}
+
+.instructionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  background: var(--bs-tertiary-bg);
+  user-select: none;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+.instructionHeader:hover {
+  background: var(--bs-secondary-bg);
+}
+
+.instructionLabel {
+  flex: 1;
+}
+
+.instructionBody {
+  padding: 0.5em 0.8em;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+/* ─── Reasoning Section (expanded by default) ─── */
+
+.reasoningSection {
+  border-bottom: 1px solid var(--bs-border-color);
+  padding: 0.4em 0.8em;
+}
+
+.reasoningLabel {
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b21a8;
+  margin-bottom: 0.3em;
+}
+
+.reasoningBlock {
+  white-space: pre-wrap;
+  font-size: 0.8em;
+  line-height: 1.5;
+  padding: 0.8em;
+  background: var(--bs-tertiary-bg);
+  border-radius: 0.3em;
+  margin-bottom: 0.4em;
+  border-left: 3px solid #6b21a8;
+  overflow-x: auto;
+}
+
+/* ─── Response Section ─── */
+
+.responseSection {
+  padding: 0.5em 0.8em;
+}
+
+/* ─── Chevron ─── */
+
+.chevron {
+  font-size: 0.65em;
+  transition: transform 0.15s ease;
+  color: var(--bs-secondary-color);
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+/* ─── Role Badges ─── */
+
+.roleBadge {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  border-radius: 0.25em;
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.rolePlanner {
+  color: #1e40af;
+  background-color: #dbeafe;
+}
+
+.roleVerifier {
+  color: #9a3412;
+  background-color: #ffedd5;
+}
+
+/* ─── Outcome Badges ─── */
+
+.outcomeBadge {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  border-radius: 0.2em;
+  font-size: 0.65em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-left: auto;
+}
+
+.outcomeAccept {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.outcomeReject {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.outcomeRefine {
+  color: #854d0e;
+  background: #fef3c7;
+}
+
+.outcomeUnknown {
+  color: var(--bs-secondary-color);
+  background: var(--bs-tertiary-bg);
+}
