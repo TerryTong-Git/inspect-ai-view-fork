@@ -311,6 +311,20 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
       size: "fit-content(12em)",
       center: true,
     });
+    columns.push({
+      label: "MT Evals",
+      value: String(liveTaskStatus.mainTaskEvalCount ?? 0),
+      size: "fit-content(8em)",
+      center: true,
+      title: "Number of live main-task evaluations launched.",
+    });
+    columns.push({
+      label: "ST Evals",
+      value: String(liveTaskStatus.sideTaskEvalCount ?? 0),
+      size: "fit-content(8em)",
+      center: true,
+      title: "Number of live side-task evaluations launched.",
+    });
   }
 
   if (selectedScores && selectedScores.length > 0) {

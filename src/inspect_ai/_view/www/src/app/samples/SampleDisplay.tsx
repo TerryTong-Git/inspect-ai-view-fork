@@ -54,7 +54,6 @@ import {
   hasPlanningMessages,
   messagesFromEvents,
 } from "./chat/messages";
-import { LiveTaskStatusBar } from "./chat/LiveTaskStatusBar";
 import { MessagesNavPills, MessagesWithSidebar } from "./chat/MessagesNavPills";
 import {
   liveTaskStatusFromEvents,
@@ -191,6 +190,8 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
         requestedAtStep: null,
         evaluating: null,
         evaluatingStartedAt: null,
+        mainTaskEvalCount: 0,
+        sideTaskEvalCount: 0,
         errorMessage: null,
       };
     }
@@ -468,7 +469,6 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
           selected={effectiveSelectedTab === kSampleMessagesTabId}
           scrollable={false}
         >
-          <LiveTaskStatusBar status={effectiveLiveTaskStatus} />
           {showPlanning ? (
             <MessagesNavPills
               id={`${baseId}-messages-${id}`}
