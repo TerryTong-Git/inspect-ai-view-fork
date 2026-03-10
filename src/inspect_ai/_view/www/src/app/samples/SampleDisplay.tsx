@@ -72,6 +72,13 @@ interface SampleDisplayProps {
   focusOnLoad?: boolean;
 }
 
+function isShadeArenaSample(sample: EvalSample | SampleSummary | undefined): boolean {
+  const metadata = sample?.metadata as
+    | Record<string, unknown>
+    | undefined;
+  return metadata?.setting_name === "shade_arena";
+}
+
 /**
  * Component to display a sample with relevant context and visibility control.
  */
@@ -168,6 +175,23 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
     }
     return liveTaskStatusFromStore(sample?.store);
   }, [runningSampleData, sample?.store]);
+
+  const effectiveLiveTaskStatus = useMemo(() => {
+    if (liveTaskStatus) {
+      return liveTaskStatus;
+    }
+    const displaySample = sample || selectedSampleSummary;
+    if (isShadeArenaSample(displaySample)) {
+      return {
+        mainTaskCompleted: null,
+        sideTaskCompleted: null,
+        scorerSuccess: null,
+        updatedAtStep: null,
+        errorMessage: null,
+      };
+    }
+    return null;
+  }, [liveTaskStatus, sample, selectedSampleSummary]);
 
   const sampleCompleted = useMemo(() => {
     if (selectedSampleSummary?.completed !== undefined) {
@@ -392,7 +416,7 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
           sample={displaySample}
           maxSuspicionScore={maxSuspicionScore}
           sampleCompleted={sampleCompleted}
-          liveTaskStatus={liveTaskStatus}
+          liveTaskStatus={effectiveLiveTaskStatus}
         />
       ) : undefined}
       <TabSet
