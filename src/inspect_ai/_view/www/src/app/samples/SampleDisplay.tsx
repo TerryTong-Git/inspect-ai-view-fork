@@ -189,6 +189,7 @@ export const SampleDisplay: FC<SampleDisplayProps> = ({
         updatedAtStep: null,
         requestedAtStep: null,
         evaluating: null,
+        evaluatingStartedAt: null,
         errorMessage: null,
       };
     }

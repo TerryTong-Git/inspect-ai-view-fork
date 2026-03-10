@@ -3,7 +3,7 @@ import { EvalSample, Target, TotalTime, WorkingTime } from "../../@types/log";
 import { arrayToString, formatTime, inputString } from "../../utils/format";
 import { FlatSampleError } from "./error/FlatSampleErrorView";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { SampleSummary } from "../../client/api/types";
 import { useSampleDescriptor, useSelectedScores } from "../../state/hooks";
 import { RenderedText } from "../content/RenderedText";
@@ -100,10 +100,21 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
 }) => {
   const sampleDescriptor = useSampleDescriptor();
   const selectedScores = useSelectedScores();
+  const [nowMs, setNowMs] = useState(() => Date.now());
   if (!sampleDescriptor) {
     return undefined;
   }
   const fields = resolveSample(sample, sampleDescriptor);
+
+  useEffect(() => {
+    if (!liveTaskStatus?.evaluating) {
+      return;
+    }
+    const id = window.setInterval(() => {
+      setNowMs(Date.now());
+    }, 200);
+    return () => window.clearInterval(id);
+  }, [liveTaskStatus?.evaluating]);
 
   const limitSize =
     sampleDescriptor?.messageShape.normalized.limit > 0
@@ -205,21 +216,29 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
 
   const renderStatusBadge = (
     value: boolean | null | undefined,
-    labels: { trueLabel: string; falseLabel: string; pendingLabel?: string },
     title?: string,
+    evaluating?: boolean,
+    evaluatingStartedAt?: number | null,
   ) => {
     let badgeColor = "#6c757d";
     let badgeBg = "#e9ecef";
-    let label = labels.pendingLabel || "Pending";
+    let label = value === true ? "1.0" : "0.0";
 
     if (value === true) {
       badgeColor = "#155724";
       badgeBg = "#d4edda";
-      label = labels.trueLabel;
-    } else if (value === false) {
+    } else if (value === false || value === null || value === undefined) {
       badgeColor = "#721c24";
       badgeBg = "#f8d7da";
-      label = labels.falseLabel;
+    }
+
+    let elapsed = "";
+    if (evaluating && evaluatingStartedAt) {
+      badgeColor = "#856404";
+      badgeBg = "#fff3cd";
+      const elapsedSeconds = Math.max(0, nowMs / 1000 - evaluatingStartedAt);
+      label = `${label} ...`;
+      elapsed = `${elapsedSeconds.toFixed(1)}s`;
     }
 
     return (
@@ -235,7 +254,20 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
         }}
         title={title}
       >
-        {label}
+        <span style={{ display: "block" }}>{label}</span>
+        {elapsed ? (
+          <span
+            style={{
+              display: "block",
+              fontSize: "0.75em",
+              fontWeight: 500,
+              marginTop: "0.15em",
+              opacity: 0.85,
+            }}
+          >
+            {elapsed}
+          </span>
+        ) : null}
       </span>
     );
   };
@@ -245,7 +277,6 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
       label: "Sample",
       value: renderStatusBadge(
         sampleCompleted,
-        { trueLabel: "Complete", falseLabel: "Running" },
         "Whether the sample has completed execution.",
       ),
       size: "fit-content(10em)",
@@ -262,8 +293,9 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
       label: "Main Task",
       value: renderStatusBadge(
         statusPending ? null : liveTaskStatus.mainTaskCompleted,
-        { trueLabel: "Complete", falseLabel: "Incomplete" },
         liveTaskStatus.errorMessage || "Best-effort live main task completion.",
+        statusPending,
+        liveTaskStatus.evaluatingStartedAt,
       ),
       size: "fit-content(12em)",
       center: true,
@@ -272,8 +304,9 @@ export const SampleSummaryView: FC<SampleSummaryViewProps> = ({
       label: "Side Task",
       value: renderStatusBadge(
         statusPending ? null : liveTaskStatus.sideTaskCompleted,
-        { trueLabel: "Complete", falseLabel: "Incomplete" },
         liveTaskStatus.errorMessage || "Best-effort live side task completion.",
+        statusPending,
+        liveTaskStatus.evaluatingStartedAt,
       ),
       size: "fit-content(12em)",
       center: true,

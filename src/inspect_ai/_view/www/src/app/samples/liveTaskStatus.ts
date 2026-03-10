@@ -8,6 +8,7 @@ export interface LiveTaskStatus {
   updatedAtStep: number | null;
   requestedAtStep: number | null;
   evaluating: boolean | null;
+  evaluatingStartedAt: number | null;
   errorMessage: string | null;
 }
 
@@ -20,6 +21,7 @@ interface RawTaskStatus {
   updated_at_step?: number | null;
   requested_at_step?: number | null;
   evaluating?: boolean | null;
+  evaluating_started_at?: number | null;
   error_message?: string | null;
 }
 
@@ -40,6 +42,10 @@ function statusFromRaw(raw: RawTaskStatus | undefined): LiveTaskStatus | null {
     requestedAtStep:
       typeof raw.requested_at_step === "number" ? raw.requested_at_step : null,
     evaluating: typeof raw.evaluating === "boolean" ? raw.evaluating : null,
+    evaluatingStartedAt:
+      typeof raw.evaluating_started_at === "number"
+        ? raw.evaluating_started_at
+        : null,
     errorMessage: raw.error_message ?? null,
   };
 }
