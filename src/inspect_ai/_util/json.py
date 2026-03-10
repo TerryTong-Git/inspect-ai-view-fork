@@ -196,6 +196,26 @@ def _apply_fast_list_op(target: list[Any], op: dict[str, Any], rel_path: str) ->
         target[:] = jsonpatch.apply_patch(target, [{**op, "path": "/" + rel_path}])  # type: ignore
 
 
+def _shadow_array_state(
+    before: dict[str, Any] | list[Any], tracked_paths: set[str]
+) -> dict[str, list[Any]]:
+    """Resolve shadow state for tracked containers, keeping only real lists.
+
+    Some JSON Patch paths end with numeric segments even when their parent object
+    is no longer a list. In that case the array fast-path is invalid and we
+    should fall back to the normal pointer lookup logic.
+    """
+    shadow_state: dict[str, list[Any]] = {}
+    for path in tracked_paths:
+        try:
+            target = deepcopy(resolve_pointer(before, path))
+        except JsonPointerException:
+            continue
+        if isinstance(target, list):
+            shadow_state[path] = target
+    return shadow_state
+
+
 def json_changes(
     before: dict[str, Any] | list[Any], after: dict[str, Any] | list[Any]
 ) -> list[JsonChange] | None:
@@ -229,9 +249,8 @@ def json_changes(
 
     # Create shadow copies of ONLY those arrays
     # resolve_pointer handles traversing 'before' to find the sub-list.
-    shadow_state = {
-        path: deepcopy(resolve_pointer(before, path)) for path in tracked_paths
-    }
+    shadow_state = _shadow_array_state(before, tracked_paths)
+    tracked_paths = set(shadow_state.keys())
 
     changes: list[JsonChange] = []
 

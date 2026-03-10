@@ -269,3 +269,25 @@ def test_get_active_container_selects_longest_match():
     container, rel_path = _get_active_container("/other/path", tracked)
     assert container is None
     assert rel_path is None
+
+
+def test_json_changes_ignores_numeric_dict_keys_in_fast_array_tracking():
+    before = {
+        "foo": {"0": {"bar": 1}},
+        "msgs": [{"id": "a"}, {"id": "b"}],
+    }
+    after = {
+        "foo": {"0": {"bar": 1, "baz": 2}},
+        "msgs": [{"id": "x"}, {"id": "a"}, {"id": "b"}],
+    }
+
+    changes = json_changes(before, after)
+
+    assert changes is not None
+    ops = {(change.op, change.path): change for change in changes}
+
+    assert ("add", "/foo/0/baz") in ops
+    assert ops[("add", "/foo/0/baz")].value == 2
+
+    assert ("replace", "/msgs/0/id") in ops
+    assert ops[("replace", "/msgs/0/id")].replaced == "a"
