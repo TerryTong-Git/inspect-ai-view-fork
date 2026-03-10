@@ -1,4 +1,4 @@
-import { applyPatch } from "fast-json-patch";
+import { JsonChange } from "../../@types/log";
 import { EvalSample, Events, StoreEvent } from "../../@types/log";
 
 export interface LiveTaskStatus {
@@ -78,23 +78,66 @@ export function liveTaskStatusFromEvents(
     return null;
   }
 
-  let store: Record<string, unknown> = {};
-  let sawStoreEvent = false;
+  const raw: RawTaskStatus = {};
+  let sawTaskStatusChange = false;
 
   for (const event of events) {
     if (!isStoreEvent(event)) {
       continue;
     }
-    sawStoreEvent = true;
-    store = applyPatch(
-      structuredClone(store),
-      event.changes as Parameters<typeof applyPatch>[1],
-    ).newDocument as Record<string, unknown>;
+    for (const change of event.changes) {
+      sawTaskStatusChange = applyTaskStatusChange(raw, change) || sawTaskStatusChange;
+    }
   }
 
-  if (!sawStoreEvent) {
+  if (!sawTaskStatusChange) {
     return null;
   }
 
-  return liveTaskStatusFromStore(store);
+  return statusFromRaw(raw);
+}
+
+function applyTaskStatusChange(raw: RawTaskStatus, change: JsonChange): boolean {
+  const match = change.path.match(/^\/ShadeArenaTaskStatus:([^/]+)$/);
+  if (!match) {
+    return false;
+  }
+
+  const field = match[1];
+  const value = change.op === "remove" ? null : change.value;
+
+  switch (field) {
+    case "main_task_completed":
+      raw.main_task_completed = value as boolean | null;
+      return true;
+    case "side_task_completed":
+      raw.side_task_completed = value as boolean | null;
+      return true;
+    case "scorer_success":
+      raw.scorer_success = value as boolean | null;
+      return true;
+    case "updated_at_step":
+      raw.updated_at_step = value as number | null;
+      return true;
+    case "requested_at_step":
+      raw.requested_at_step = value as number | null;
+      return true;
+    case "evaluating":
+      raw.evaluating = value as boolean | null;
+      return true;
+    case "evaluating_started_at":
+      raw.evaluating_started_at = value as number | null;
+      return true;
+    case "main_task_eval_count":
+      raw.main_task_eval_count = value as number | null;
+      return true;
+    case "side_task_eval_count":
+      raw.side_task_eval_count = value as number | null;
+      return true;
+    case "error_message":
+      raw.error_message = value as string | null;
+      return true;
+    default:
+      return false;
+  }
 }
