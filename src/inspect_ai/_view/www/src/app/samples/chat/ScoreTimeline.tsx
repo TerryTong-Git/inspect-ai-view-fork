@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { FC, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Messages } from "../../../@types/log";
 import { getMetadataField, getSuspicionScore } from "./messages";
 import styles from "./ScoreTimeline.module.css";
@@ -23,6 +24,8 @@ export const ScoreTimeline: FC<ScoreTimelineProps> = ({
   messages,
   onJumpTo,
 }) => {
+  const [, setSearchParams] = useSearchParams();
+
   // Extract assistant turns with scores, assign IDs if missing
   const turns = useMemo(() => {
     const entries: TurnEntry[] = [];
@@ -59,9 +62,21 @@ export const ScoreTimeline: FC<ScoreTimelineProps> = ({
       const el = document.querySelector(`[data-msg-id="${msgId}"]`);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
       }
+
+      // For virtualized message lists, target rows may not be mounted yet.
+      // Updating the existing deep-link param lets the list scroll by ID.
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          next.set("message", msgId);
+          return next;
+        },
+        { replace: true },
+      );
     },
-    [onJumpTo],
+    [onJumpTo, setSearchParams],
   );
 
   if (turns.length === 0) return null;

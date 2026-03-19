@@ -48,7 +48,16 @@
 }
 
 .chat {
+  display: block !important;
   padding: 1em;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chat > * {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
 }
 
 .padded {
